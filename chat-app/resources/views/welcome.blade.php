@@ -13,19 +13,37 @@
         <script src="{{ asset('socket.io.js') }}"></script>
         <script src="https://code.jquery.com/jquery-3.7.0.js" integrity="sha256-JlqSTELeR4TLqP0OG9dxM7yDPqX1ox/HfgiSLBj8+kM=" crossorigin="anonymous"></script>
         <!-- Styles -->
-        <style>  </style>
+        <style> 
+            ul {
+                list-style: none
+            }
+         </style>
     </head>
     <body class="antialiased">
+    <ul id="messageList">
+        <!-- Existing messages will be appended here -->
+    </ul>
+    <input id="chatInput" placeholder="message" />
+    <button id = "submit" class="btn btn-primary">send</button>
     
-    <button class="btn btn-primary">send</button>
-
-
+    
     <script>
         $(function(){
 
             const socket = io('http://127.0.0.1:3000');
-            socket.on('server', msg => console.log(msg));
-
+            
+            $("#submit").click(function(){
+                const message = $("#chatInput").val();
+                socket.emit('message', message);
+        });
+        socket.on('message', msg => {
+                const listItem = $("<li class = 'alert alert-primary col-md-4 col-md-offset-4'>").text(msg);
+                $("#messageList").append(listItem);
+            });
+        socket.on('userMessage', msg => {
+            const listItem = $("<li class = 'alert alert-success text-end col-md-4 col-md-offset-4'>").text(msg);
+            $("#messageList").append(listItem);
+        });
         });
     </script>
     </body>

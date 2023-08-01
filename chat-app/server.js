@@ -15,9 +15,10 @@ io.on('connection',(socket)=>{
      console.log(socket.id);   
      
      socket.on('message',msg => {
-          console.log(msg);
+        socket.emit('userMessage',msg);
+        socket.broadcast.emit('message',msg);
+        
      });
-     socket.emit('server', 'Send message from server');
      socket.on('disconnect',(socket)=>{             
         console.log('Disconnect');     
 }); 
