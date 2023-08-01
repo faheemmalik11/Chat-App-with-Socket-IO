@@ -28,10 +28,23 @@
     
     
     <script>
+        let typing = true;
+        const socket = io('http://127.0.0.1:3000');
+        document.getElementById('chatInput').addEventListener('input', function() {
+            const inputValue = this.value.trim();
+            if (typing){
+                socket.emit('typing', {startedTyping: true});
+                typing = false;
+            }
+            if (inputValue === '') {
+                socket.emit('typing', {stoppedTyping: true});
+                typing = true;
+            } 
+        });
         $(function(){
 
-            const socket = io('http://127.0.0.1:3000');
-            
+           
+
             $("#submit").click(function(){
                 const message = $("#chatInput").val();
                 socket.emit('message', message);

@@ -19,6 +19,9 @@ io.on('connection',(socket)=>{
         socket.broadcast.emit('message',msg);
         
      });
+     socket.on('typing', (typing) => {
+        socket.broadcast.emit('typing',typing);
+     });
      socket.on('disconnect',(socket)=>{             
         console.log('Disconnect');     
 }); 
