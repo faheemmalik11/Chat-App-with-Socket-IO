@@ -15,7 +15,7 @@ npm install express
 ```sh
 npm install socket.io
 ```
-
+`also to use this project after clone install these packages`
 ## Server Side Setup
 Create a serve.js file in the app and setup the server.
 ```sh
