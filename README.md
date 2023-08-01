@@ -3,6 +3,9 @@
 * [Installation](#installation)
 * [Server Side Setup](#server-side-setup)
 * [Client Side Setup](#client-side-setup)
+* [Emit Events](#emit-events)
+* [Listen Events](#listen-events)
+* [Broadcast Events](#broadcast-events)
 
 ## Installation
 Install all the necessary dependencies for the application.
@@ -83,4 +86,27 @@ Route::get('/socket.io.js', function () {
     </body>
 </html>
 
+```
+## Emit Events
+To emit an event using socket.io. .emit function is used. We emit an event from one side and it is listened one the other side.
+```sh
+io.on('connection', (socket) => {
+    socket.emit('message',"HELLO WORLD!");
+})
+```
+## Listen Events
+To listen to an event .on function is used. 
+```sh
+io.on("connection", (socket) => {
+  socket.on("message", (arg) => {
+    console.log(arg); // "HELLO WORLD!"
+  });
+});
+```
+## Broadcast Events
+Broadcast is sending event to all the connected clients. 
+```sh
+io.on("connection", (socket) => {
+  socket.broadcast.emit("message", "HELLO WORLD!");
+});
 ```
