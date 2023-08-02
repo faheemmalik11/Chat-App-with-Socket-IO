@@ -21,7 +21,7 @@
     </head>
     <body class="antialiased">
     <ul id="messageList">
-        <!-- Existing messages will be appended here -->
+
     </ul>
     <input id="chatInput" placeholder="message" />
     <button id = "submit" class="btn btn-primary">send</button>
