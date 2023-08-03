@@ -2,6 +2,8 @@
 
 use Illuminate\Support\Str;
 
+
+$user_type = ( ( !empty(request()) && (int)request()->segment(2) ) > 0 ? '_'. request()->segment(2) : '');
 return [
 
     /*
@@ -128,9 +130,8 @@ return [
 
     'cookie' => env(
         'SESSION_COOKIE',
-        Str::slug(env('APP_NAME', 'laravel'), '_').'_session'
+        Str::slug(env('APP_NAME', 'laravel'), '_').'_session'. $user_type //This user_type generate various session keys for your multiple login according to generated URL
     ),
-
     /*
     |--------------------------------------------------------------------------
     | Session Cookie Path

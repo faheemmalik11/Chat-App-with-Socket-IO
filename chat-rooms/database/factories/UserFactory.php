@@ -11,6 +11,7 @@ use Illuminate\Support\Str;
  */
 class UserFactory extends Factory
 {
+    private static $num = 1;
     /**
      * Define the model's default state.
      *
@@ -24,6 +25,7 @@ class UserFactory extends Factory
             'email_verified_at' => now(),
             'password' => Hash::make('12345'), // password
             'remember_token' => Str::random(10),
+            'avatar_url' => 'https://bootdey.com/img/Content/avatar/avatar'.self::$num++.'.png'
         ];
     }
 

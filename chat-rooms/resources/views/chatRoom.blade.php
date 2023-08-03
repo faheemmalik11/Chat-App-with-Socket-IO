@@ -5,60 +5,13 @@
 
 
 <div class="p-3">
-<div class="container">
-<div class="row clearfix">
-    <div class="col-lg-12">
-        <div class="card chat-app">
+<div class="container ">
+<div class="row clearfix ">
+    <div class="col-lg-12 ">
+        <div class="card chat-app ">
             <div id="plist" class="people-list">
-                <div class="input-group">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text"><i class="fa fa-search"></i></span>
-                    </div>
-                    <input type="text" class="form-control" placeholder="Search...">
-                </div>
-                <ul class="list-unstyled chat-list mt-2 mb-0">
-                    <li class="clearfix">
-                        <img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="avatar">
-                        <div class="about">
-                            <div class="name">Vincent Porter</div>
-                            <div class="status"> <i class="fa fa-circle offline"></i> left 7 mins ago </div>                                            
-                        </div>
-                    </li>
-                    <li class="clearfix active">
-                        <img src="https://bootdey.com/img/Content/avatar/avatar2.png" alt="avatar">
-                        <div class="about">
-                            <div class="name">Aiden Chavez</div>
-                            <div class="status"> <i class="fa fa-circle online"></i> online </div>
-                        </div>
-                    </li>
-                    <li class="clearfix">
-                        <img src="https://bootdey.com/img/Content/avatar/avatar3.png" alt="avatar">
-                        <div class="about">
-                            <div class="name">Mike Thomas</div>
-                            <div class="status"> <i class="fa fa-circle online"></i> online </div>
-                        </div>
-                    </li>                                    
-                    <li class="clearfix">
-                        <img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="avatar">
-                        <div class="about">
-                            <div class="name">Christian Kelly</div>
-                            <div class="status"> <i class="fa fa-circle offline"></i> left 10 hours ago </div>
-                        </div>
-                    </li>
-                    <li class="clearfix">
-                        <img src="https://bootdey.com/img/Content/avatar/avatar8.png" alt="avatar">
-                        <div class="about">
-                            <div class="name">Monica Ward</div>
-                            <div class="status"> <i class="fa fa-circle online"></i> online </div>
-                        </div>
-                    </li>
-                    <li class="clearfix">
-                        <img src="https://bootdey.com/img/Content/avatar/avatar3.png" alt="avatar">
-                        <div class="about">
-                            <div class="name">Dean Henry</div>
-                            <div class="status"> <i class="fa fa-circle offline"></i> offline since Oct 28 </div>
-                        </div>
-                    </li>
+
+                <ul id="userList" class="list-unstyled chat-list mt-2 mb-0">
                 </ul>
             </div>
             <div class="chat">
@@ -66,33 +19,25 @@
                     <div class="row">
                         <div class="col-lg-6">
                             <a href="javascript:void(0);" data-toggle="modal" data-target="#view_info">
-                                <img src="https://bootdey.com/img/Content/avatar/avatar2.png" alt="avatar">
+                                <img src="{{auth()->user()->avatar_url}}" alt="avatar">
                             </a>
                             <div class="chat-about">
                                 <h6 class="m-b-0">{{auth()->user()->name}}</h6>
-                                <small>Last seen: 2 hours ago</small>
+                                <small><div class="status"> <i class="fa fa-circle online"></i> online </div></small>
                             </div>
                         </div>
                         
                     </div>
                     
                 </div>
-                <div class="chat-history">
-                    <ul class="m-b-0">
+                <div class="chat-history ">
+                    <ul id="messagesList" class="m-b-0 ">
                     <div id="notification" class="alert alert-success "></div>
-                        <li class="clearfix">
-                            <div class="message-data text-right">
-                                <span class="message-data-time">10:10 AM, Today</span>
-                                <img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="avatar">
-                            </div>
-                            <div class="message other-message float-right"> User </div>
-                        </li>
-                        <li class="clearfix">
-                            <div class="message-data">
-                                <span class="message-data-time">10:12 AM, Today</span>
-                            </div>
-                            <div id="listeners" class="message my-message"> </div>                                    
-                        </li>                               
+                       
+
+                            
+                            
+                                        
                         
                     </ul>
                 </div>
@@ -110,30 +55,57 @@
 </div>
 </div>
 </div>
-<input id="name" type="hidden" value="{{auth()->user()->name}}" />
-<input id="group" type = "hidden" value="{{$group}}" />
+<input id="name" type="hidden" value="{{auth()->user()->name}}" /> //name of the user
+<input id="avatar" type="hidden" value="{{auth()->user()->avatar_url}}" /> //avatar of the user
+<input id="group" type = "hidden" value="{{$group}}" /> //group 
 <script>
+    
         $(function(){
             
             const socket = io('http://127.0.0.1:3000');
-                socket.emit('join', {group:$("#group").val(), user: $("#name").val()});
+
+                socket.emit('join', {group:$("#group").val(), user: $("#name").val(), avatar: $("#avatar").val()}); //join event emitted 
 
 
             socket.on('joinMessage', msg => {
-                const li = document.createElement('li');
-                li.textContent = msg;
-                console.log(msg);
-                document.getElementById('notification').appendChild(li);
+                $("#userList").remove(); //removes joined users ul 
+                $('#notification').remove(); //removes notification div
+                $('<div id="notification" class="alert alert-success "></div>').appendTo($('#messagesList')); //adds notification div to parent div
+                $('<ul id="userList" class="list-unstyled chat-list mt-2 mb-0"></ul>').appendTo($('#plist')); //add user list to parent div
+                for (let i =0; i < msg.users.length; i++){  //loop on users array coming from server 
+                    const userList ='<li class="clearfix active"> <img src="'+msg.avatars[i]+'" alt="avatar"><div class="about"> <div class="name">'+msg.users[i]+'</div><div class="status"> <i class="fa fa-circle online"></i> online </div> </div> </li>' //joined users
+                    const li = document.createElement('li'); 
+                    li.textContent = msg.users[i]+' Joined the chat'; // notification message
+                    $('#notification').append(li);  
+                    $("#userList").append(userList);
+            }});
+
+            $("#sendMessage").on('click', function(){ //send button click event
+                socket.emit('sendMessage', {group:$("#group").val(),message: $("#message").val(), avatar: $("#avatar").val()}); //event emited
+                $("#message").val(''); //input field made empty
+            });
+            $("#message").on('keydown',function(e) { //enter in message input event trigger
+                if(e.which == 13) {
+                    socket.emit('sendMessage', {group:$("#group").val(),message: $("#message").val(), avatar: $("#avatar").val()});
+                    $("#message").val('');
+                }
             });
 
-            $("#sendMessage").on('click', function(){
-                socket.emit('sendMessage', {group:$("#group").val(),message: $("#message").val()});
+            socket.on('newMessage', (msg) => { //message event listen for other users
+                const time = new Date().toLocaleString([], { hour: 'numeric', minute: 'numeric' }); //date
+                const component = '<li class="clearfix"><div class="message-data"> <span class="message-data-time">'+time+'</span> <img src="'+msg.avatar+'" alt="avatar"> </div> <div class="message my-message">'+msg.message+'</div> </li>     ';
+                $("#messagesList").append(component);
+                
+        
             });
+            socket.on('newMessageSender', (msg) => { //message event listen for sender
 
-            socket.on('newMessage', (msg) => {
-                const li = document.createElement('li');
-                li.textContent = msg;
-                document.getElementById('listeners').appendChild(li);
+                const time = new Date().toLocaleString([], { hour: 'numeric', minute: 'numeric' });
+                var component = '<li class="clearfix"> <div class="message-data text-right"> <span class="message-data-time">'+time+'</span> <img class="float-right" src="'+msg.avatar+'" alt="avatar"></div><div class="message other-message float-right">'+msg.message +' </div></li>';
+               
+
+                $("#messagesList").append(component);
+                
         
             });
         });

@@ -6,6 +6,10 @@ const app = express();
 
 
 const server = http.createServer(app); 
+var users = [];
+var avatars = [];
+users = new Set();
+avatars = new Set();
 const io = new Server(server, {   
      cors: { origin: "*"} });
 
@@ -18,11 +22,16 @@ io.on('connection',(socket)=>{
      socket.on('join', msg => {
         console.log(msg);
        socket.join(msg.group);
-       io.to(msg.group).emit('joinMessage', msg.user + ' Joined the group');
+       users.add(msg.user);
+       avatars.add(msg.avatar);
+       console.log([...users]);
+       io.to(msg.group).emit('joinMessage', {users: [...users], avatars: [...avatars]});
+       
      });
 
      socket.on('sendMessage', msg => {
-        io.to(msg.group).emit('newMessage',msg.message);
+          socket.emit('newMessageSender', {message:msg.message, avatar: msg.avatar});
+        socket.broadcast.to(msg.group).emit('newMessage', {message:msg.message, avatar: msg.avatar});
      })
 
      socket.on('disconnect',(socket)=>{             

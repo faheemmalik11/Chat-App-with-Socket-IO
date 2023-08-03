@@ -12,6 +12,7 @@ body{
     background-color: #f4f7f6;
     margin-top:20px;
 }
+
 .card {
     background: #fff;
     transition: .5s;
@@ -99,8 +100,10 @@ body{
 }
 
 .chat .chat-history {
+    height: 500px; 
     padding: 20px;
-    border-bottom: 2px solid #fff
+    border-bottom: 2px solid #fff;
+    overflow-y: scroll;
 }
 
 .chat .chat-history ul {
