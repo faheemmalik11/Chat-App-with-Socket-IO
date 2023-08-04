@@ -1,66 +1,112 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+* [Installation](#installation)
+* [Server Side Setup](#server-side-setup)
+* [Client Side Setup](#client-side-setup)
+* [Emit Events](#emit-events)
+* [Listen Events](#listen-events)
+* [Broadcast Events](#broadcast-events)
 
-## About Laravel
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Installation
+Install all the necessary dependencies for the application.
+```sh
+npm install express
+```
+```sh
+npm install socket.io
+```
+`also to use this project after clone install these packages`
+## Server Side Setup
+Create a server.js file in the app and setup the server.
+```sh
+import express from 'express';
+import http from 'http';
+import {Server} from 'socket.io';
+import {createServer} from 'http';
+const app = express(); 
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+const server = http.createServer(app); 
+const io = new Server(server, {   
+     cors: { origin: "*"} });
 
-## Learning Laravel
+app.get('/', (req, res) => {     
+          res.send('Hello world');   
+});     
+io.on('connection',(socket)=>{     
+     console.log('Connected');   
+     
+     socket.on('disconnect',(socket)=>{             
+        console.log('Disconnect');     
+}); 
+})  
+     
+server.listen(3000, () => {   
+     console.log('Server is running'); 
+});
+```
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## Client Side Setup
+routes/web.php:
+```sh
+Route::get('/socket.io.js', function () {
+    return response()->file(base_path('node_modules/socket.io/client-dist/socket.io.js'));
+});
+```
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+```sh
+<!DOCTYPE html>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+        <title>Chat App</title>
 
-## Laravel Sponsors
+        <link rel="preconnect" href="https://fonts.bunny.net">
+        <link href="https://fonts.bunny.net/css?family=figtree:400,600&display=swap" rel="stylesheet" />
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+        <script src="{{ asset('socket.io.js') }}"></script>
+        <script src="https://code.jquery.com/jquery-3.7.0.js" integrity="sha256-JlqSTELeR4TLqP0OG9dxM7yDPqX1ox/HfgiSLBj8+kM=" crossorigin="anonymous"></script>
+        <!-- Styles -->
+        <style>  </style>
+    </head>
+    <body class="antialiased">
+    
 
-### Premium Partners
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
+    <script>
+        $(function(){
 
-## Contributing
+            const socket = io('http://127.0.0.1:3000');
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+        });
+    </script>
+    </body>
+</html>
 
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+```
+## Emit Events
+To emit an event using socket.io. .emit function is used. We emit an event from one side and it is listened one the other side.
+```sh
+io.on('connection', (socket) => {
+    socket.emit('message',"HELLO WORLD!");
+})
+```
+## Listen Events
+To listen to an event .on function is used. 
+```sh
+io.on("connection", (socket) => {
+  socket.on("message", (arg) => {
+    console.log(arg); // "HELLO WORLD!"
+  });
+});
+```
+## Broadcast Events
+Broadcast is sending event to all the connected clients. 
+```sh
+io.on("connection", (socket) => {
+  socket.broadcast.emit("message", "HELLO WORLD!");
+});
+```
