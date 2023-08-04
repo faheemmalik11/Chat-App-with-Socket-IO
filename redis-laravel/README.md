@@ -1,139 +1,12 @@
-# Chat-App-with-Socket-IO
+# Redis Laravel
 
-* [Installation](#installation)
-* [Server Side Setup](#server-side-setup)
-* [Client Side Setup](#client-side-setup)
-* [Emit Events](#emit-events)
-* [Listen Events](#listen-events)
-* [Broadcast Events](#broadcast-events)
-* [Channel](#channel)
-* [Redis Laravel](#redis-laravel)
-
-## Installation
-Install all the necessary dependencies for the application.
-```sh
-npm install express
-```
-```sh
-npm install socket.io
-```
-`also to use this project after clone install these packages`
-## Server Side Setup
-Create a server.js file in the app and setup the server.
-```sh
-import express from 'express';
-import http from 'http';
-import {Server} from 'socket.io';
-import {createServer} from 'http';
-const app = express(); 
-
-
-const server = http.createServer(app); 
-const io = new Server(server, {   
-     cors: { origin: "*"} });
-
-app.get('/', (req, res) => {     
-          res.send('Hello world');   
-});     
-io.on('connection',(socket)=>{     
-     console.log('Connected');   
-     
-     socket.on('disconnect',(socket)=>{             
-        console.log('Disconnect');     
-}); 
-})  
-     
-server.listen(3000, () => {   
-     console.log('Server is running'); 
-});
-```
-
-## Client Side Setup
-routes/web.php:
-```sh
-Route::get('/socket.io.js', function () {
-    return response()->file(base_path('node_modules/socket.io/client-dist/socket.io.js'));
-});
-```
-
-```sh
-<!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-
-        <title>Chat App</title>
-
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=figtree:400,600&display=swap" rel="stylesheet" />
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
-
-        <script src="{{ asset('socket.io.js') }}"></script>
-        <script src="https://code.jquery.com/jquery-3.7.0.js" integrity="sha256-JlqSTELeR4TLqP0OG9dxM7yDPqX1ox/HfgiSLBj8+kM=" crossorigin="anonymous"></script>
-        <!-- Styles -->
-        <style>  </style>
-    </head>
-    <body class="antialiased">
-    
-
-
-    <script>
-        $(function(){
-
-            const socket = io('http://127.0.0.1:3000');
-
-        });
-    </script>
-    </body>
-</html>
-
-```
-## Emit Events
-To emit an event using socket.io. .emit function is used. We emit an event from one side and it is listened one the other side.
-```sh
-io.on('connection', (socket) => {
-    socket.emit('message',"HELLO WORLD!");
-})
-```
-## Listen Events
-To listen to an event .on function is used. 
-```sh
-io.on("connection", (socket) => {
-  socket.on("message", (arg) => {
-    console.log(arg); // "HELLO WORLD!"
-  });
-});
-```
-## Broadcast Events
-Broadcast is sending event to all the connected clients. 
-```sh
-io.on("connection", (socket) => {
-  socket.broadcast.emit("message", "HELLO WORLD!");
-});
-```
-
-## Channel
-
-### Introduction
-This project is a real-time chat room application built using Socket.io and Laravel. It allows users to join the chat room, see other online users, send messages, and reply to messages in real-time. The chat messages and user presence are broadcasted to all connected clients using Laravel broadcasting with the help of the Socket.io library.
-
-### Features
-
-User Authentication: Users can register and log in to participate in the chat room.
-Real-Time Communication: Messages are sent and received in real-time without the need to refresh the page.
-User Presence: The chat room displays a list of all online users.
-Message Replies: Users can reply to messages, and replies are broadcasted to all users.
-
-## Redis Laravel
-
-### Install predis
+## Install Predis
 
 ```sh
 composer require predis/predis
 ```
 
-### Create Event
+## Create Event
 
 ```sh
 php artisan make:event SendMessage
@@ -201,7 +74,7 @@ class SendMessage implements ShouldBroadcastNow
 }
 ```
 
-### Updating env File
+## Updating Env File
 
 You need to set env file with BROADCAST_DRIVER as redis and database configuration and also database redis configuration.
 ```sh
@@ -218,7 +91,7 @@ REDIS_PORT=6379
 LARAVEL_ECHO_PORT=6001
 ```
 
-### Updating configuration
+## Updating configuration
 
 app/config/database.ph
 ```php
@@ -251,12 +124,12 @@ app/config/database.ph
 ]
 ```
 
-### Migration
+## Migration
 ```sh
 php artisan migrate
 ```
 
-### Install laravel echo server
+## Install laravel echo server
 ```sh
 npm install -g laravel-echo-server
 ```
@@ -266,7 +139,7 @@ npx laravel-echo-server init
 ```
 It will create new file laravel-echo-server.json file
 
-###  Install npm, laravel-echo, socket.io-client
+##  Install npm, laravel-echo, socket.io-client
 Here, we will install npm and also install laravel-echo, socket.io-client. also you need to configuration. so let's run following command:
 ```sh
 npm install
@@ -327,7 +200,7 @@ then:
 npm run dev
 ```
 
-### Update views
+## Update views
 app/resources/views/welcome.php
 ```sh
 <!doctype html>
@@ -370,7 +243,7 @@ app/resources/views/welcome.php
 </html>
 ```
 
-### Call Event
+## Call Event
 
 routes/web.php
 ```sh
@@ -380,7 +253,7 @@ Route::get('/t', function () {
 });
 ```
 
-### Final steps
+## Final steps
 You must have to install redis server in your system or server. it not then you can install using following command:
 ```sh
 sudo apt install redis-server
