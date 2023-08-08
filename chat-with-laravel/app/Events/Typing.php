@@ -1,49 +1,44 @@
 <?php
-  
+
 namespace App\Events;
-  
+
 use Illuminate\Broadcasting\Channel;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Broadcasting\PrivateChannel;
-use Illuminate\Broadcasting\PresenceChannel;
-use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Broadcasting\InteractsWithSockets;
+use Illuminate\Broadcasting\PresenceChannel;
+use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
-  
-class SendMessage implements ShouldBroadcastNow
+use Illuminate\Foundation\Events\Dispatchable;
+use Illuminate\Queue\SerializesModels;
+
+class Typing implements ShouldBroadcastNow
 {
-    use InteractsWithSockets, SerializesModels;
-    protected $data ;
-  
+    use Dispatchable, InteractsWithSockets, SerializesModels;
+
     /**
      * Create a new event instance.
-     *
-     * @return void
      */
+    protected $data;
     public function __construct($data)
     {
         $this->data = $data;
     }
-  
+
     /**
      * Get the channels the event should broadcast on.
      *
-     * @return \Illuminate\Broadcasting\Channel|array
+     * @return array<int, \Illuminate\Broadcasting\Channel>
      */
-    public function broadcastOn()
+    public function broadcastOn(): array
     {
-        return new PresenceChannel('general.'.$this->data['channel']->id);
+        return [
+            new PresenceChannel('general.'.$this->data['channel']),
+        ];
     }
-  
-    /**
-     * The event's broadcast name.
-     *
-     * @return string
-     */
+
     public function broadcastAs()
     {
-        return 'message';
+        return 'typing';
     }
     /**
      * The event's broadcast name.

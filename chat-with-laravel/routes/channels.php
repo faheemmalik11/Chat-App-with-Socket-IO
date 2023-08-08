@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Channel;
 use Illuminate\Support\Facades\Broadcast;
 
 /*
@@ -19,8 +20,10 @@ Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
 
 
 
- Broadcast::channel('private-channel.{userId}', function ($user, $userId) {
-    // Add your logic to check if the user can join the private channel.
-    return true;
-    // return (int) $user->id === (int) $userId;
-});
+ Broadcast::channel('general.{channelId}', function ($user, $channelId) {
+
+      $channel =  Channel::findorFail($channelId);
+      if( $channel->users->contains($user)){
+        return ['id' => $user->id, 'name' => $user->name];
+      }
+},['guards'=>['user']]);

@@ -14,6 +14,8 @@ return new class extends Migration
         Schema::create('chats', function (Blueprint $table) {
             $table->id();
             $table->string('message');
+            $table->bigInteger('channel_id')->unsigned()->index()->nullable();
+            $table->foreign('channel_id')->references('id')->on('channels');
             $table->bigInteger('user_id')->unsigned()->index()->nullable();
             $table->foreign('user_id')->references('id')->on('users');
             $table->timestamps();
