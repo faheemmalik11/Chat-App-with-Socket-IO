@@ -84,6 +84,7 @@ php artisan db:seed
 ```
 5. Install npm packages
 ```sh
+npm install
 ```
 then:
 ```sh
