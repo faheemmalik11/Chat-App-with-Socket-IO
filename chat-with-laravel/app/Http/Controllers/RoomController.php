@@ -21,11 +21,11 @@ class RoomController extends Controller
        $channel = Channel::findorFail(request('channel'));
        $data = ["message"=>$message, "channel"=>$channel, "user"=>auth()->user()];
        broadcast(new SendMessage($data));
-    //    $chat = Chat::create([
-    //         "message"=>$message,
-    //         "channel_id"=>$channel->id,
-    //         "user_id"=>auth()->user()->id,
-    //    ]);
+       $chat = Chat::create([
+            "message"=>$message,
+            "channel_id"=>$channel->id,
+            "user_id"=>auth()->user()->id,
+       ]);
        return response()->json([
         'code'=>200,
         'data' => [
