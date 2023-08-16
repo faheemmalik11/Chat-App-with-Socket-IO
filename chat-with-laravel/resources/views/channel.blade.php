@@ -14,9 +14,13 @@
 
     @foreach(auth()->user()->channels as $channel)
         <h1><a href="{{route('room',['channel' => $channel])}}">#{{$channel->name}}</a></h1>
+
+        
     @endforeach
 
    
 
+
 </body>
+
 </html>

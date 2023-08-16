@@ -35,6 +35,8 @@
             </form>
         </div>
         </div>
+
+        
     </body>
   
     <script>
@@ -60,10 +62,10 @@
             data: frm.serialize(),
             success: function (data) {
                 $.cookie("token", data.data.token, { expires: 2400, path: '/' });
-                window.location.href = "http://127.0.0.1:8000/channel/"
+                window.location.href = "http://127.0.0.1:8000/chat/"
             },
             error: function (data) {
-                console.log('An error occurred.');
+                console.log('Unauthorized Attempt');
                 console.log(data);
             },
         });

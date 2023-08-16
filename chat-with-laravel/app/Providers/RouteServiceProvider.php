@@ -45,6 +45,10 @@ class RouteServiceProvider extends ServiceProvider
             ->prefix('room')
             ->group(base_path('routes/api/room.php'));
 
+            Route::middleware('api')
+            ->prefix('chat')
+            ->group(base_path('routes/api/chat.php'));
+
             Route::middleware('web')
                 ->group(base_path('routes/web.php'));
         });

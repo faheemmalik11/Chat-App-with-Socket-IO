@@ -27,3 +27,10 @@ Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
         return ['id' => $user->id, 'name' => $user->name];
       }
 },['guards'=>['user']]);
+
+
+Broadcast::channel('chat.{userId}', function ($user, $userId) {
+
+  return $user->id == $userId;
+ 
+},['guards'=>['user']]);
