@@ -29,8 +29,8 @@ Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
 },['guards'=>['user']]);
 
 
-Broadcast::channel('chat.{userId}', function ($user, $userId) {
+Broadcast::channel('chat.{recipientId}.{senderId}', function ($user, $recipientId, $senderId ) {
 
-  return $user->id == $userId;
+  return $user->id == $recipientId || $user->id == $senderId;
  
 },['guards'=>['user']]);

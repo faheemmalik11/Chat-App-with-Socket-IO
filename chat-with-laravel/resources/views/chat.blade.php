@@ -77,26 +77,12 @@
 					<div class="position-relative">
 						<div class="chat-messages p-4">
 
-							<div class="chat-message-right pb-4">
-								<div>
-									<img src="https://bootdey.com/img/Content/avatar/avatar1.png" class="rounded-circle mr-1" alt="Chris Wood" width="40" height="40">
-									<div class="text-muted small text-nowrap mt-2">2:33 am</div>
-								</div>
-								<div class="flex-shrink-1 bg-light rounded py-2 px-3 mr-3">
-									<div class="font-weight-bold mb-1">You</div>
-									Lorem ipsum dolor sit amet, vis erat denique in, dicunt prodesset te vix.
-								</div>
+							<div id="sender" class="chat-message-right pb-4">
+								
 							</div>
 
-							<div class="chat-message-left pb-4">
-								<div>
-									<img src="https://bootdey.com/img/Content/avatar/avatar3.png" class="rounded-circle mr-1" alt="Sharon Lessman" width="40" height="40">
-									<div class="text-muted small text-nowrap mt-2">2:34 am</div>
-								</div>
-								<div class="flex-shrink-1 bg-light rounded py-2 px-3 ml-3">
-									<div class="font-weight-bold mb-1">Sharon Lessman</div>
-									Sit meis deleniti eu, pri vidit meliore docendi ut, an eum erat animal commodo.
-								</div>
+							<div id="reciever" class="chat-message-left pb-4">
+								
 							</div>
 
 							
@@ -105,7 +91,7 @@
 					</div>
 
 					<div class="flex-grow-0 py-3 px-4 border-top">
-							<form  class="input-group" id="messageForm" method = "POST" action="http://127.0.0.1:8000/room/sendMessage" >
+							<form  class="input-group" id="messageForm" method = "POST" action="http://127.0.0.1:8000/chat/sendMessage" >
                                 <input id="messageInput" name="message" type="text" class="form-control" placeholder="Type your message">
                                 <button type="submit" id="send" class="btn btn-primary">Send</button>
                             </form>
@@ -128,15 +114,58 @@
     <script type="text/javascript">
 
 		var frm = $('#messageForm');
+		var user_id = 0;
+
+
+		$(document).ready(function() {
+        @foreach($users as $user)
+			$("#user-{{$user->id}}").click(function () {
+				$("#user-profile").html('<div class="position-relative"> <img src="{{$user->avatar}}" class="rounded-circle mr-1" alt="Sharon Lessman" width="40" height="40"></div><div class="flex-grow-1 pl-3"><strong>{{$user->name}}</strong><div class="text-muted small"><em>Typing...</em></div></div>');
+				user_id = {{$user->id}};
+				window.Echo.private('chat.'+user_id+'.{{auth()->user()->id}}').listen('.message', (e) => {
+					console.log(e);
+					$("#sender").append('<div>'
+									+'<img src="{{auth()->user()->avatar}}" class="rounded-circle mr-1" alt="{auth()->user()->name}}" width="40" height="40">'
+									+'<div class="text-muted small text-nowrap mt-2">2:33 am</div>'
+									+'</div>'
+									+'<div class="flex-shrink-1 bg-light rounded py-2 px-3 mr-3">'
+									+'<div class="font-weight-bold mb-1">You</div>'
+									+$("#messageInput").val()
+									+'</div>')
+				
+
+
+				});
+
+
+				window.Echo.private('chat.{{auth()->user()->id}}.'+user_id).listen('.message', (e) => {
+					console.log(e);
+
+				
+
+				$("#reciever").append('<div>'
+									+'<img src="{{$user->avatar}}" class="rounded-circle mr-1" alt="{{$user->name}}" width="40" height="40">'
+									+'<div class="text-muted small text-nowrap mt-2">2:34 am</div>'
+									+'</div>'
+									+'<div class="flex-shrink-1 bg-light rounded py-2 px-3 ml-3">'
+									+'<div class="font-weight-bold mb-1">{{$user->name}}</div>'
+									+e.message
+									+'</div>');
+				});
+			});
+			
+		@endforeach
 
 		frm.submit(function (e) {
-
+			
 			e.preventDefault();
+			var formData = frm.serializeArray();
+			formData.push({name: 'user_id', value: user_id});
 
 			$.ajax({
 				type: frm.attr('method'),
 				url: frm.attr('action'),
-				data: frm.serialize(),
+				data: formData,
 				success: function (data) {
 						console.log(data);
 				},
@@ -147,15 +176,10 @@
 			});
 
 		});
-
-
-		$(document).ready(function() {
-        @foreach($users as $user)
-			$("#user-{{$user->id}}").click(function () {
-				$("#user-profile").html('<div class="position-relative"> <img src="{{$user->avatar}}" class="rounded-circle mr-1" alt="Sharon Lessman" width="40" height="40"></div><div class="flex-grow-1 pl-3"><strong>{{$user->name}}</strong><div class="text-muted small"><em>Typing...</em></div></div>');
-			});
-		@endforeach
+		
 	});
+	
+	
     </script>
 </body>
 </html>

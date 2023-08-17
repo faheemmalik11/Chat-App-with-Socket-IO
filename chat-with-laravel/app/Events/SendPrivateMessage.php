@@ -33,7 +33,7 @@ class SendPrivateMessage implements ShouldBroadcastNow
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('chat.'.$this->data['user']);
+        return new PrivateChannel('chat.'.$this->data['recepientUserId'].'.'.$this->data['senderUserId']);
     }
   
     /**
