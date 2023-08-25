@@ -37,7 +37,7 @@
 
 		<h1 class="h3 mb-3">Messages</h1>
 
-		<div class="card">
+		<div  class="card">
 			<div class="row g-0">
 				<div class="col-12 col-lg-5 col-xl-3 border-right">
 
@@ -68,35 +68,34 @@
 					<hr class="d-block d-lg-none mt-1 mb-0">
 				</div>
 				<div class="col-12 col-lg-7 col-xl-9">
+
+				<div id="guideText"class="container h-100">
+					<div  class="row align-items-center h-100">
+						<div class="col-6 mx-auto">
+							<div class="jumbotron">
+								Click On user profile to start chatting
+							</div>
+						</div>
+					</div>
+				</div>
+
 					<div class="py-2 px-4 border-bottom d-none d-lg-block">
 						<div id="user-profile"class="d-flex align-items-center py-1">
 							
 						</div>
 					</div>
 
-					<div class="position-relative">
-						<div class="chat-messages p-4">
-
-							<div id="sender" class="chat-message-right pb-4">
-								
-							</div>
-
-							<div id="reciever" class="chat-message-left pb-4">
-								
-							</div>
-
-							
-
-						</div>
+					<div id="userChat" class="position-relative">
+	
 					</div>
+
 
 					<div class="flex-grow-0 py-3 px-4 border-top">
-							<form  class="input-group" id="messageForm" method = "POST" action="http://127.0.0.1:8000/chat/sendMessage" >
-                                <input id="messageInput" name="message" type="text" class="form-control" placeholder="Type your message">
-                                <button type="submit" id="send" class="btn btn-primary">Send</button>
-                            </form>
+						<form  method="POST" action="http://127.0.0.1:8000/chat/sendMessage" class="input-group" id="messageForm"   >
+							
+						</form>
 					</div>
-					<div id="df"></div>
+
 				</div>
 			</div>
 		</div>
@@ -113,51 +112,98 @@
 
     <script type="text/javascript">
 
-		var frm = $('#messageForm');
+		var frm = $('#messageForm')
 		var user_id = 0;
 
 
 		$(document).ready(function() {
         @foreach($users as $user)
 			$("#user-{{$user->id}}").click(function () {
-				$("#user-profile").html('<div class="position-relative"> <img src="{{$user->avatar}}" class="rounded-circle mr-1" alt="Sharon Lessman" width="40" height="40"></div><div class="flex-grow-1 pl-3"><strong>{{$user->name}}</strong><div class="text-muted small"><em>Typing...</em></div></div>');
 				user_id = {{$user->id}};
+				$("#user-profile").html('<div class="position-relative"> <img src="{{$user->avatar}}" class="rounded-circle mr-1" alt="Sharon Lessman" width="40" height="40"></div><div class="flex-grow-1 pl-3"><strong>{{$user->name}}</strong><div class="text-muted small"><em>Typing...</em></div></div>');
+				$("#userChat").html('<div id= "chat" class="chat-messages p-4"></div>')
+				$('#guideText').html('');
+				$('#guideText').remove();
+				$('#messageForm').html('<input id="messageInput" name="message" type="text" class="form-control" placeholder="Type your message"><button type="submit"  id="send" class="btn btn-primary">Send</button> ');
+				// console.log({{$user->id}});
+				$.ajax({
+					url: "http://127.0.0.1:8000/chat/getMessages/{{$user->id}}",
+					type: 'GET',
+					dataType: 'json', 
+					success: function(res) {
+						console.log(res.messages);
+						jQuery.each(res.messages, function(index, message) {
+							console.log(message);
+								if(message.sender_id == {{auth()->user()->id}}) {
+										$("#chat").append('<div id="sender" class="chat-message-right pb-4">'
+												+'<div>'
+												+'<img src="{{auth()->user()->avatar}}" class="rounded-circle mr-1" alt="{auth()->user()->name}}" width="40" height="40">'
+												+'<div class="text-muted small text-nowrap mt-2">2:33 am</div>'
+												+'</div>'
+												+'<div class="flex-shrink-1 bg-light rounded py-2 px-3 mr-3">'
+												+'<div class="font-weight-bold mb-1">You</div>'
+												+message.message
+												+'</div>'
+											+'</div>');
+								}else{
+										$("#chat").append('<div id="reciever" class="chat-message-left pb-4">'
+										+'<div>'
+										+'<img src="{{$user->avatar}}" class="rounded-circle mr-1" alt="{{$user->name}}" width="40" height="40">'
+										+'<div class="text-muted small text-nowrap mt-2">2:34 am</div>'
+										+'</div>'
+										+'<div class="flex-shrink-1 bg-light rounded py-2 px-3 ml-3">'
+										+'<div class="font-weight-bold mb-1">{{$user->name}}</div>'
+										+message.message
+										+'</div>'
+										+'</div>' );
+
+								}
+						});			
+
+					}
+				});
+
+				// console.log(user_id);
 				window.Echo.private('chat.'+user_id+'.{{auth()->user()->id}}').listen('.message', (e) => {
 					console.log(e);
-					$("#sender").append('<div>'
+					$("#chat").append('<div id="sender" class="chat-message-right pb-4">'
+									+'<div>'
 									+'<img src="{{auth()->user()->avatar}}" class="rounded-circle mr-1" alt="{auth()->user()->name}}" width="40" height="40">'
 									+'<div class="text-muted small text-nowrap mt-2">2:33 am</div>'
 									+'</div>'
 									+'<div class="flex-shrink-1 bg-light rounded py-2 px-3 mr-3">'
 									+'<div class="font-weight-bold mb-1">You</div>'
 									+$("#messageInput").val()
-									+'</div>')
+									+'</div>'
+								+'</div>');
 				
-
+					
 
 				});
 
-
+				// console.log(user_id);
 				window.Echo.private('chat.{{auth()->user()->id}}.'+user_id).listen('.message', (e) => {
 					console.log(e);
 
 				
 
-				$("#reciever").append('<div>'
+				$("#chat").append('<div id="reciever" class="chat-message-left pb-4">'
+						+'<div>'
 									+'<img src="{{$user->avatar}}" class="rounded-circle mr-1" alt="{{$user->name}}" width="40" height="40">'
 									+'<div class="text-muted small text-nowrap mt-2">2:34 am</div>'
 									+'</div>'
 									+'<div class="flex-shrink-1 bg-light rounded py-2 px-3 ml-3">'
 									+'<div class="font-weight-bold mb-1">{{$user->name}}</div>'
 									+e.message
-									+'</div>');
+									+'</div>'
+								+'</div>');
 				});
 			});
 			
 		@endforeach
 
 		frm.submit(function (e) {
-			
+
 			e.preventDefault();
 			var formData = frm.serializeArray();
 			formData.push({name: 'user_id', value: user_id});
@@ -178,6 +224,7 @@
 		});
 		
 	});
+	
 	
 	
     </script>

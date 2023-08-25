@@ -12,6 +12,7 @@ Route::middleware(['authUser'])->group(function () {
         return view('chat',compact('users'));
     })->name("chat");
     Route::post('sendMessage', [ChatController::class, 'sendMessage']);
+    Route::get('getMessages/{id}', [ChatController::class, 'getMessages']);
 
 });
 
