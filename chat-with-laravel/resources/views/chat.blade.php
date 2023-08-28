@@ -135,10 +135,12 @@
 						jQuery.each(res.messages, function(index, message) {
 							console.log(message);
 								if(message.sender_id == {{auth()->user()->id}}) {
+									var date = new Date(message.created_at);
+									var formattedTime = date.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: true });
 										$("#chat").append('<div id="sender" class="chat-message-right pb-4">'
 												+'<div>'
 												+'<img src="{{auth()->user()->avatar}}" class="rounded-circle mr-1" alt="{auth()->user()->name}}" width="40" height="40">'
-												+'<div class="text-muted small text-nowrap mt-2">2:33 am</div>'
+												+'<div class="text-muted small text-nowrap mt-2">'+formattedTime+'</div>'
 												+'</div>'
 												+'<div class="flex-shrink-1 bg-light rounded py-2 px-3 mr-3">'
 												+'<div class="font-weight-bold mb-1">You</div>'
@@ -146,10 +148,13 @@
 												+'</div>'
 											+'</div>');
 								}else{
+									var date = new Date(message.created_at);
+									var formattedTime = date.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: true });
+
 										$("#chat").append('<div id="reciever" class="chat-message-left pb-4">'
 										+'<div>'
 										+'<img src="{{$user->avatar}}" class="rounded-circle mr-1" alt="{{$user->name}}" width="40" height="40">'
-										+'<div class="text-muted small text-nowrap mt-2">2:34 am</div>'
+										+'<div class="text-muted small text-nowrap mt-2">'+formattedTime+'</div>'
 										+'</div>'
 										+'<div class="flex-shrink-1 bg-light rounded py-2 px-3 ml-3">'
 										+'<div class="font-weight-bold mb-1">{{$user->name}}</div>'
@@ -164,17 +169,22 @@
 				});
 
 				// console.log(user_id);
-				window.Echo.private('chat.'+user_id+'.{{auth()->user()->id}}').listen('.message', (e) => {
+				
+			});
+			
+			window.Echo.private('chat.{{$user->id}}.{{auth()->user()->id}}').listen('.message', (e) => {
 					console.log(e);
+					var date = new Date();
+					var formattedTime = date.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: true });
 					$("#chat").append('<div id="sender" class="chat-message-right pb-4">'
-									+'<div>'
-									+'<img src="{{auth()->user()->avatar}}" class="rounded-circle mr-1" alt="{auth()->user()->name}}" width="40" height="40">'
-									+'<div class="text-muted small text-nowrap mt-2">2:33 am</div>'
-									+'</div>'
-									+'<div class="flex-shrink-1 bg-light rounded py-2 px-3 mr-3">'
-									+'<div class="font-weight-bold mb-1">You</div>'
-									+$("#messageInput").val()
-									+'</div>'
+										+'<div>'
+											+'<img src="{{auth()->user()->avatar}}" class="rounded-circle mr-1" alt="{auth()->user()->name}}" width="40" height="40">'
+											+'<div class="text-muted small text-nowrap mt-2">'+formattedTime+'</div>'
+										+'</div>'
+										+'<div class="flex-shrink-1 bg-light rounded py-2 px-3 mr-3">'
+											+'<div class="font-weight-bold mb-1">You</div>'
+												+$("#messageInput").val()
+										+'</div>'
 								+'</div>');
 				
 					
@@ -182,25 +192,27 @@
 				});
 
 				// console.log(user_id);
-				window.Echo.private('chat.{{auth()->user()->id}}.'+user_id).listen('.message', (e) => {
+				window.Echo.private('chat.{{auth()->user()->id}}.{{$user->id}}').listen('.message', (e) => {
+					var date = new Date();
+					var formattedTime = date.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: true });
 					console.log(e);
 
 				
 
 				$("#chat").append('<div id="reciever" class="chat-message-left pb-4">'
-						+'<div>'
-									+'<img src="{{$user->avatar}}" class="rounded-circle mr-1" alt="{{$user->name}}" width="40" height="40">'
-									+'<div class="text-muted small text-nowrap mt-2">2:34 am</div>'
+									+'<div>'
+										+'<img src="{{$user->avatar}}" class="rounded-circle mr-1" alt="{{$user->name}}" width="40" height="40">'
+										+'<div class="text-muted small text-nowrap mt-2">'+formattedTime+'</div>'
 									+'</div>'
 									+'<div class="flex-shrink-1 bg-light rounded py-2 px-3 ml-3">'
-									+'<div class="font-weight-bold mb-1">{{$user->name}}</div>'
-									+e.message
+										+'<div class="font-weight-bold mb-1">{{$user->name}}</div>'
+										+e.message
 									+'</div>'
 								+'</div>');
 				});
-			});
-			
 		@endforeach
+
+
 
 		frm.submit(function (e) {
 

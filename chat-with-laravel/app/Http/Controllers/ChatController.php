@@ -32,11 +32,11 @@ class ChatController extends Controller
         $user = request('user_id');
         $data = ["message"=>$message, "recepientUserId"=>$user, "senderUserId"=>auth()->user()->id,];
         broadcast(new SendPrivateMessage($data));
-        // UserChat::create([
-        //     'sender_id' => auth()->user()->id,
-        //     'receiver_id' => request('user_id'),
-        //     'message' => $message,
-        // ]);
+        UserChat::create([
+            'sender_id' => auth()->user()->id,
+            'receiver_id' => request('user_id'),
+            'message' => $message,
+        ]);
         return response()->json([
             'code'=>200,
             'data' => [
